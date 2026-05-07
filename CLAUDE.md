@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project context
 
-This is the **AgentCX** project — a Customer Support Resolution Agent built in 5 phases to prepare Jahir for the CCA-F (Claude Certified Associate – Foundations) exam. Read `CONTEXT.md` before any session to get the full study progress, exam results, and where to continue. The agent covers all 5 exam domains across 5 sequential phases, each in its own subdirectory.
+This is the **AgentCX** project — a Customer Support Resolution Agent built in 5 phases to prepare Jahir for the CCA-F (Claude Certified Associate – Foundations) exam. Read `docs/CONTEXT.md` before any session to get the full study progress, exam results, and where to continue. The agent covers all 5 exam domains across 5 sequential phases, each in its own subdirectory.
 
 ## Setup
 
