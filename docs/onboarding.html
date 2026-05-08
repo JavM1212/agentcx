@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AgentCX — Teammate Onboarding</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      line-height: 1.7;
+      padding: 2rem 1rem;
+    }
+
+    .container {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      padding: 3rem 0 2.5rem;
+      border-bottom: 1px solid #1e2330;
+      margin-bottom: 3rem;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #1a1f2e;
+      border: 1px solid #2d3748;
+      color: #7c8cf8;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.3rem 0.8rem;
+      border-radius: 999px;
+      margin-bottom: 1.2rem;
+    }
+
+    h1 {
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: #f7fafc;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.8rem;
+    }
+
+    header p {
+      color: #718096;
+      font-size: 1.05rem;
+      max-width: 520px;
+      margin: 0 auto;
+    }
+
+    .step {
+      display: flex;
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+      align-items: flex-start;
+    }
+
+    .step-number {
+      flex-shrink: 0;
+      width: 2.2rem;
+      height: 2.2rem;
+      background: #1a1f2e;
+      border: 1px solid #2d3748;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #7c8cf8;
+      margin-top: 0.15rem;
+    }
+
+    .step-content h2 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #f7fafc;
+      margin-bottom: 0.5rem;
+    }
+
+    .step-content p {
+      color: #a0aec0;
+      font-size: 0.95rem;
+      margin-bottom: 0.8rem;
+    }
+
+    pre {
+      background: #1a1f2e;
+      border: 1px solid #2d3748;
+      border-radius: 8px;
+      padding: 1rem 1.2rem;
+      font-family: "SF Mono", "Fira Code", "Fira Mono", monospace;
+      font-size: 0.85rem;
+      color: #e2e8f0;
+      overflow-x: auto;
+      margin-top: 0.5rem;
+    }
+
+    .comment { color: #4a5568; }
+    .cmd { color: #68d391; }
+    .arg { color: #7c8cf8; }
+    .str { color: #f6ad55; }
+
+    .callout {
+      background: #1a1f2e;
+      border-left: 3px solid #7c8cf8;
+      border-radius: 0 8px 8px 0;
+      padding: 1rem 1.2rem;
+      margin-top: 0.8rem;
+      font-size: 0.9rem;
+      color: #a0aec0;
+    }
+
+    .callout strong {
+      color: #e2e8f0;
+    }
+
+    .divider {
+      border: none;
+      border-top: 1px solid #1e2330;
+      margin: 3rem 0;
+    }
+
+    .prereqs {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      margin-top: 0.8rem;
+    }
+
+    .prereq-item {
+      background: #1a1f2e;
+      border: 1px solid #2d3748;
+      border-radius: 8px;
+      padding: 0.9rem 1rem;
+      font-size: 0.88rem;
+    }
+
+    .prereq-item .label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #4a5568;
+      margin-bottom: 0.3rem;
+    }
+
+    .prereq-item .value {
+      color: #e2e8f0;
+      font-weight: 500;
+    }
+
+    footer {
+      text-align: center;
+      color: #4a5568;
+      font-size: 0.82rem;
+      padding-top: 2rem;
+      border-top: 1px solid #1e2330;
+      margin-top: 3rem;
+    }
+
+    footer a {
+      color: #7c8cf8;
+      text-decoration: none;
+    }
+
+    @media (max-width: 540px) {
+      h1 { font-size: 1.8rem; }
+      .prereqs { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <header>
+      <div class="badge">CCA-F Exam Prep</div>
+      <h1>AgentCX</h1>
+      <p>Build a Customer Support Agent from scratch — guided by Claude, one phase at a time.</p>
+    </header>
+
+    <!-- Prerequisites -->
+    <div class="step">
+      <div class="step-number">0</div>
+      <div class="step-content">
+        <h2>Prerequisites</h2>
+        <p>Make sure you have these before starting.</p>
+        <div class="prereqs">
+          <div class="prereq-item">
+            <div class="label">Python</div>
+            <div class="value">3.10 or higher</div>
+          </div>
+          <div class="prereq-item">
+            <div class="label">Claude Code</div>
+            <div class="value">CLI installed</div>
+          </div>
+          <div class="prereq-item">
+            <div class="label">Anthropic API Key</div>
+            <div class="value">console.anthropic.com</div>
+          </div>
+          <div class="prereq-item">
+            <div class="label">Git</div>
+            <div class="value">Any recent version</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
+    <!-- Step 1 -->
+    <div class="step">
+      <div class="step-number">1</div>
+      <div class="step-content">
+        <h2>Clone the repo — starter branch</h2>
+        <p>The <code>starter</code> branch has no implementation code — just the docs and the builder skill. You'll build everything yourself.</p>
+        <pre><span class="cmd">git</span> clone <span class="str">https://github.com/JavM1212/agentcx.git</span>
+<span class="cmd">cd</span> agentcx
+<span class="cmd">git</span> checkout starter</pre>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step">
+      <div class="step-number">2</div>
+      <div class="step-content">
+        <h2>Create your virtual environment</h2>
+        <p>Use Python 3.10+ to avoid type hint compatibility issues.</p>
+        <pre><span class="cmd">python3</span> -m venv .venv
+<span class="cmd">source</span> .venv/bin/activate
+<span class="cmd">pip</span> install -r requirements.txt</pre>
+        <div class="callout">
+          <strong>Tip:</strong> Add this alias to your <code>~/.zshrc</code> so you can run any module with <code>run &lt;module&gt;</code>:<br /><br />
+          <code>alias run='/path/to/agentcx/.venv/bin/python -m'</code>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step">
+      <div class="step-number">3</div>
+      <div class="step-content">
+        <h2>Add your API key</h2>
+        <p>Create a <code>.env</code> file in the project root. Never commit this file — it's already in <code>.gitignore</code>.</p>
+        <pre><span class="comment"># .env</span>
+<span class="arg">ANTHROPIC_API_KEY</span>=sk-ant-...</pre>
+      </div>
+    </div>
+
+    <!-- Step 4 -->
+    <div class="step">
+      <div class="step-number">4</div>
+      <div class="step-content">
+        <h2>Open Claude Code</h2>
+        <p>Launch Claude Code from the project root.</p>
+        <pre><span class="cmd">claude</span></pre>
+      </div>
+    </div>
+
+    <!-- Step 5 -->
+    <div class="step">
+      <div class="step-number">5</div>
+      <div class="step-content">
+        <h2>Start building</h2>
+        <p>Invoke the builder skill. Claude will read the reference docs, detect where you are, and guide you through each step.</p>
+        <pre><span class="arg">/agentcx-builder</span></pre>
+        <div class="callout">
+          <strong>What to expect:</strong> Claude explains concepts with analogies, asks you questions before writing code, introduces intentional bugs for you to find, and connects every decision to a CCA-F exam task statement. You control the pace.
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      <p>AgentCX · <a href="https://github.com/JavM1212/agentcx" target="_blank">github.com/JavM1212/agentcx</a> · CCA-F Exam Prep</p>
+    </footer>
+
+  </div>
+</body>
+</html>
