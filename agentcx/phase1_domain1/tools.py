@@ -13,6 +13,12 @@ ORDERS = {
     "ORD-101": {"customer_id": "C002", "item": "Mouse", "amount": 29.99, "status": "delivered"},
 }
 
+REFUND_POLICIES = {
+    "electronics": {"window_days": 30, "condition": "item must be unopened or defective", "max_amount": 2000.00},
+    "accessories": {"window_days": 60, "condition": "any condition", "max_amount": 200.00},
+    "default": {"window_days": 14, "condition": "original condition", "max_amount": 500.00},
+}
+
 
 def get_customer(customer_id: str) -> dict:
     customer = CUSTOMERS.get(customer_id)
@@ -39,6 +45,11 @@ def process_refund(order_id: str, reason: str) -> dict:
         "status": "approved",
         "reason": reason,
     }
+
+
+def get_refund_policy(category: str) -> dict:
+    policy = REFUND_POLICIES.get(category, REFUND_POLICIES["default"])
+    return {"category": category, **policy}
 
 
 # Tool definitions in Anthropic format
@@ -77,10 +88,22 @@ TOOL_DEFINITIONS = [
             "required": ["order_id", "reason"],
         },
     },
+    {
+        "name": "get_refund_policy",
+        "description": "Retrieve the refund policy for a product category (electronics, accessories, or default).",
+        "input_schema": {
+            "type": "object",
+            "properties": {
+                "category": {"type": "string", "description": "Product category: electronics, accessories, or default"}
+            },
+            "required": ["category"],
+        },
+    },
 ]
 
 TOOL_FUNCTIONS = {
     "get_customer": get_customer,
     "get_order": get_order,
     "process_refund": process_refund,
+    "get_refund_policy": get_refund_policy,
 }
