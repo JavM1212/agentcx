@@ -16,12 +16,20 @@ Requires an `.env` file with `ANTHROPIC_API_KEY` (never commit it). Use `python-
 
 ## Running phases
 
-Each phase is a standalone Python module. Run from repo root:
+The project uses a venv at `.venv/` with Python 3.13. A shell alias makes running modules easy.
 
+**One-time setup:**
 ```bash
-python -m agentcx.phase1_domain1.agent
-python -m agentcx.phase1_domain1.coordinator
+source ~/.zshrc   # loads the `run` alias
 ```
+
+**Run any module:**
+```bash
+run agentcx.phase1_domain1.agent
+run agentcx.phase1_domain1.coordinator
+```
+
+The `run` alias expands to `/Users/jahirvalverde/Developer/customer-support-agent/.venv/bin/python -m`.
 
 No test framework is configured yet. Validation is done by running scripts and observing `stop_reason` behavior in real Claude API responses.
 

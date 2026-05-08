@@ -1,5 +1,5 @@
 """
-AgentCX Phase 1 — Step 1: Agentic loop with stop_reason.
+AgentCX Phase 1 — Step 2: Prerequisite gate wired into the agentic loop.
 """
 
 import json
@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 import anthropic
 
 from agentcx.phase1_domain1.tools import TOOL_DEFINITIONS, TOOL_FUNCTIONS
+from agentcx.phase1_domain1.hooks import AgentState, pre_tool_gate, post_tool_update
 
 load_dotenv()
 
@@ -20,6 +21,7 @@ Always look up the customer and order before processing any refund."""
 
 def run_agent(user_message: str) -> str:
     messages = [{"role": "user", "content": user_message}]
+    state = AgentState()
 
     while True:
         response = client.messages.create(
@@ -33,26 +35,34 @@ def run_agent(user_message: str) -> str:
         if response.stop_reason == "end_turn":
             return response.content[0].text
 
-        # Execute all tool calls in this response
         tool_results = []
         for block in response.content:
             if block.type == "tool_use":
-                tool_fn = TOOL_FUNCTIONS[block.name]
-                result = tool_fn(**block.input)
-                print(f"  [tool] {block.name}({block.input}) → {result}")
+
+                # Run prerequisite gate BEFORE executing the tool
+                gate_error = pre_tool_gate(block.name, block.input, state)
+                if gate_error:
+                    print(f"  [gate] {block.name} BLOCKED → {gate_error['error']}")
+                    result = gate_error
+                else:
+                    tool_fn = TOOL_FUNCTIONS[block.name]
+                    result = tool_fn(**block.input)
+                    print(f"  [tool] {block.name}({block.input}) → {result}")
+
+                    post_tool_update(block.name, result, state)
+
                 tool_results.append({
                     "type": "tool_result",
                     "tool_use_id": block.id,
                     "content": json.dumps(result),
                 })
 
-        # Append assistant response + tool results to messages
         messages.append({"role": "assistant", "content": response.content})
         messages.append({"role": "user", "content": tool_results})
 
 
 if __name__ == "__main__":
-    print("=== AgentCX Phase 1 — Agentic Loop ===\n")
+    print("=== AgentCX Phase 1 — Step 2: Prerequisite Gate ===\n")
     result = run_agent(
         "I'm customer C001. I'd like a refund for order ORD-100. It arrived damaged."
     )
