@@ -22,14 +22,22 @@ LOOKUP_TOOLS = [t for t in TOOL_DEFINITIONS if t["name"] in ("get_customer", "ge
 RESOLUTION_TOOLS = [t for t in TOOL_DEFINITIONS if t["name"] == "process_refund"]
 
 
-def run_subagent(system_prompt: str, user_message: str, tools: list) -> str:
+def run_subagent(
+    system_prompt: str,
+    user_message: str,
+    tools: list,
+    initial_state: AgentState | None = None,
+) -> tuple[str, AgentState]:
     """
     Runs a subagent with its own isolated context.
     Subagents start fresh — no inherited conversation history.
     The hook is registered here, on the subagent that calls the tools.
+
+    Returns (text_result, final_state) so the coordinator can pass
+    programmatic state to the next subagent explicitly.
     """
     messages = [{"role": "user", "content": user_message}]
-    state = AgentState()
+    state = initial_state if initial_state is not None else AgentState()
 
     while True:
         response = client.messages.create(
@@ -41,7 +49,7 @@ def run_subagent(system_prompt: str, user_message: str, tools: list) -> str:
         )
 
         if response.stop_reason == "end_turn":
-            return response.content[0].text
+            return response.content[0].text, state
 
         tool_results = []
         for block in response.content:
@@ -72,20 +80,29 @@ def run_coordinator(user_message: str) -> str:
     """
     Coordinator — hub-and-spoke pattern.
     Does NOT call tools directly. Routes to subagents and assembles results.
+    Explicitly passes both text context AND programmatic state between subagents.
     """
     print("\n[coordinator] Starting lookup_agent...")
-    lookup_result = run_subagent(
-        system_prompt="You are a customer lookup specialist. Look up the customer and their order. Return a structured summary with customer_id, customer_name, order_id, item, amount, and order_status.",
+    lookup_result, lookup_state = run_subagent(
+        system_prompt=(
+            "You are a customer lookup specialist. "
+            "Look up the customer and their order using the provided tools. "
+            "Return ONLY a JSON object with these fields: "
+            "customer_id, customer_name, order_id, item, amount, order_status. "
+            "No explanation, no markdown, just the JSON."
+        ),
         user_message=user_message,
         tools=LOOKUP_TOOLS,
     )
     print(f"\n[coordinator] lookup_agent result:\n{lookup_result}")
 
+    # Explicitly inject both text context AND state into resolution_agent
     print("\n[coordinator] Starting resolution_agent...")
-    resolution_result = run_subagent(
+    resolution_result, _ = run_subagent(
         system_prompt="You are a refund specialist. Process the refund based on the case details provided.",
-        user_message=f"Case details:\n{lookup_result}\n\nOriginal request: {user_message}", 
+        user_message=f"Case details:\n{lookup_result}\n\nOriginal request: {user_message}",
         tools=RESOLUTION_TOOLS,
+        initial_state=lookup_state,  # pass verified_customer_id across subagent boundary
     )
     print(f"\n[coordinator] resolution_agent result:\n{resolution_result}")
 

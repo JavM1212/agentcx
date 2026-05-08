@@ -1,5 +1,5 @@
 """
-AgentCX Phase 1 — Step 2: Prerequisite gate wired into the agentic loop.
+AgentCX Phase 1 — Step 3: PostToolUse hook wired into the agentic loop.
 """
 
 import json
@@ -8,7 +8,7 @@ from dotenv import load_dotenv
 import anthropic
 
 from agentcx.phase1_domain1.tools import TOOL_DEFINITIONS, TOOL_FUNCTIONS
-from agentcx.phase1_domain1.hooks import AgentState, pre_tool_gate, post_tool_update
+from agentcx.phase1_domain1.hooks import AgentState, pre_tool_gate, on_post_tool_use
 
 load_dotenv()
 
@@ -39,7 +39,6 @@ def run_agent(user_message: str) -> str:
         for block in response.content:
             if block.type == "tool_use":
 
-                # Run prerequisite gate BEFORE executing the tool
                 gate_error = pre_tool_gate(block.name, block.input, state)
                 if gate_error:
                     print(f"  [gate] {block.name} BLOCKED → {gate_error['error']}")
@@ -49,7 +48,7 @@ def run_agent(user_message: str) -> str:
                     result = tool_fn(**block.input)
                     print(f"  [tool] {block.name}({block.input}) → {result}")
 
-                    post_tool_update(block.name, result, state)
+                on_post_tool_use(block.name, result, state)
 
                 tool_results.append({
                     "type": "tool_result",
@@ -62,7 +61,7 @@ def run_agent(user_message: str) -> str:
 
 
 if __name__ == "__main__":
-    print("=== AgentCX Phase 1 — Step 2: Prerequisite Gate ===\n")
+    print("=== AgentCX Phase 1 — Step 3: PostToolUse Hook ===\n")
     result = run_agent(
         "I'm customer C001. I'd like a refund for order ORD-100. It arrived damaged."
     )

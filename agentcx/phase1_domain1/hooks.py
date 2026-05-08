@@ -1,9 +1,11 @@
 """
-AgentCX Phase 1 — Step 2: Prerequisite gate.
+AgentCX Phase 1 — Step 3: PostToolUse hook.
 
-Intercepts tool calls before they reach tools.py.
-Blocks process_refund until get_customer has run successfully.
+Hooks fire automatically after every tool call — the loop doesn't decide when.
+pre_tool_gate: blocks tool execution if prerequisites aren't met.
+on_post_tool_use: updates agent state after every tool call.
 """
+
 
 class AgentState:
     """Holds state that persists across tool calls in a single agent run."""
@@ -29,10 +31,15 @@ def pre_tool_gate(tool_name: str, tool_input: dict, state: AgentState) -> dict |
     return None
 
 
-def post_tool_update(tool_name: str, tool_result: dict, state: AgentState) -> None:
+def on_post_tool_use(tool_name: str, tool_result: dict, state: AgentState) -> None:
     """
-    Called after every tool execution.
+    PostToolUse hook — fires after every tool call, blocked or not.
     Updates agent state based on tool results.
+
+    EXAM RULE: This hook fires only for the agent it is registered on.
+    In a multi-agent setup, register this on the subagent that calls the tools,
+    not on the coordinator.
     """
     if tool_name == "get_customer" and "error" not in tool_result:
         state.verified_customer_id = tool_result["customer_id"]
+        print(f"  [hook] verified_customer_id set → {state.verified_customer_id}")
