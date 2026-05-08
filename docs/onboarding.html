@@ -123,6 +123,39 @@
       color: #e2e8f0;
     }
 
+    .prompt-box {
+      background: #0d1117;
+      border: 1px solid #2d3748;
+      border-radius: 8px;
+      padding: 1.2rem 1.4rem;
+      margin-top: 0.8rem;
+      font-size: 0.88rem;
+      color: #a0aec0;
+      line-height: 1.8;
+      white-space: pre-wrap;
+      font-family: inherit;
+      position: relative;
+    }
+
+    .copy-btn {
+      position: absolute;
+      top: 0.7rem;
+      right: 0.7rem;
+      background: #1a1f2e;
+      border: 1px solid #2d3748;
+      color: #7c8cf8;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 0.25rem 0.7rem;
+      border-radius: 5px;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: background 0.15s;
+    }
+
+    .copy-btn:hover { background: #232940; }
+    .copy-btn.copied { color: #68d391; border-color: #68d391; }
+
     .divider {
       border: none;
       border-top: 1px solid #1e2330;
@@ -216,6 +249,40 @@
 
     <hr class="divider" />
 
+    <!-- Step 0.5 — Generate CONTEXT.md -->
+    <div class="step">
+      <div class="step-number">½</div>
+      <div class="step-content">
+        <h2>Generate your personal CONTEXT.md</h2>
+        <p>Before building, create your study context file. Open <strong>Claude.ai</strong> or the <strong>Claude desktop app</strong> and paste this prompt. Claude will interview you and produce a ready-to-save <code>docs/CONTEXT.md</code>.</p>
+        <div class="prompt-box" id="context-prompt">I'm preparing for the CCA-F (Claude Certified Associate – Foundations) certification exam and starting the AgentCX project.
+
+Please interview me to build my personal CONTEXT.md file. Ask me about:
+1. My background and experience level with Claude SDK and LLMs
+2. Which CCA-F domains I've already studied (D1–D5)
+3. Mock exam results, if any (score, domain breakdown, weak areas)
+4. Key concepts I keep getting wrong under pressure
+
+After the interview, generate a complete CONTEXT.md file in this exact format:
+
+- Header with my name and background
+- Exam structure table (use the standard CCA-F domain weights)
+- Study progress per domain (✅ Complete / 🔄 In progress / ⬜ Not started)
+- Exam results table if applicable
+- Key concepts to reinforce section
+- A "How to continue" section that says: start a Claude Code session and run /agentcx-builder
+
+I will save this file to docs/CONTEXT.md in the agentcx repo.
+        <button class="copy-btn" onclick="copyPrompt()">Copy</button>
+        </div>
+        <div class="callout" style="margin-top:0.8rem">
+          <strong>Then:</strong> Save the output as <code>docs/CONTEXT.md</code> in your cloned repo. The builder skill reads this file at the start of every session to know where you left off.
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider" />
+
     <!-- Step 1 -->
     <div class="step">
       <div class="step-number">1</div>
@@ -283,5 +350,21 @@
     </footer>
 
   </div>
+  <script>
+    function copyPrompt() {
+      const box = document.getElementById('context-prompt');
+      const btn = box.querySelector('.copy-btn');
+      // Get text content excluding the button text
+      const text = box.childNodes[0].textContent.trim();
+      navigator.clipboard.writeText(text).then(() => {
+        btn.textContent = 'Copied!';
+        btn.classList.add('copied');
+        setTimeout(() => {
+          btn.textContent = 'Copy';
+          btn.classList.remove('copied');
+        }, 2000);
+      });
+    }
+  </script>
 </body>
 </html>
